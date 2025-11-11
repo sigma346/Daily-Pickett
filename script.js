@@ -3,13 +3,28 @@ async function register() {
     const email = document.getElementById("email").value
     const password = document.getElementById("password").value
 
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+            data: {
+                username: username
+            }
+        }
+    });
+
     if (error) {
         alert(error.message)
     } else {
-        alert("Account created — go check email to confirm.")
+        alert("Account created — check your email to verify.")
+
+        await supabase.from("users").insert({
+            username: username,
+            email: email
+        });
     }
 }
+
 
 async function login() {
     const email = document.getElementById("email").value
