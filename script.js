@@ -49,49 +49,45 @@ async function loadLayout() {
 document.addEventListener("DOMContentLoaded", loadLayout);
 
 // listen for new messages (realtime)
-db
-  .channel('chat')
+db.channel('chat')
   .on(
     'postgres_changes',
     { event: 'INSERT', schema: 'public', table: 'chat_messages' },
-    payload => {
+    (payload) => {
       const msg = payload.new;
-      addMessage(msg.username, msg.message, msg.created_at);
+      addMessage(msg.username, msg.message);
     }
   )
   .subscribe();
 
-// send messages
 async function sendMessage() {
-  const username = document.getElementById("chat-username").value;
+  const username = document.getElementById("chat-username").value || "Anonymous";
   const text = document.getElementById("chat-input").value;
-
   if (!text.trim()) return;
 
-  await db.from("chat_messages").insert([
-    { username: username || "Anonymous", message: text }
-  ]);
+  await db.from("chat_messages").insert([{ username, message: text }]);
 
   document.getElementById("chat-input").value = "";
 }
 
-// render message
-function addMessage(username, text, time) {
-  const msgContainer = document.getElementById("messages");
-  const messageEl = document.createElement("div");
-  messageEl.textContent = `[${username}] ${text}`;
-  msgContainer.appendChild(messageEl);
-  msgContainer.scrollTop = msgContainer.scrollHeight;
+function addMessage(username, text) {
+  const messagesDiv = document.getElementById("messages");
+
+  const el = document.createElement("div");
+  el.textContent = `[${username}] ${text}`;
+
+  messagesDiv.appendChild(el);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight; // auto scroll
 }
 
-// load chat history on page open
 async function loadMessages() {
   const { data } = await db
     .from("chat_messages")
     .select("*")
     .order("created_at", { ascending: true });
 
-  data.forEach(msg => addMessage(msg.username, msg.message, msg.created_at));
+  data.forEach(msg => addMessage(msg.username, msg.message));
 }
 
-loadMessages();
+document.addEventListener("DOMContentLoaded", loadMessages);
+
