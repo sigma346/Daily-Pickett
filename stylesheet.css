@@ -23,7 +23,7 @@ body {
 }
 
 .content-section {
-    margin: 100px auto;
+    margin: 5px auto;
     margin-left: 15%;
     margin-right: 15%;
     text-align: center;
@@ -31,12 +31,33 @@ body {
     border-radius: 10px;
     background-color: white;
     padding: 50px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.chat-box {
+    width: 600px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.messages {
+    height: 300px;
+    overflow-y: scroll;
+    border: 1px solid #ddd;
+    padding: 8px;
+    margin-bottom: 10px;
+    font-family: monospace;
 }
 
 
 
 /* Items */
+
+
 
 
 /* button styles */
