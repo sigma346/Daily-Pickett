@@ -158,6 +158,6 @@ button {
 
 .chat-emote {
   display: flex;
-  width: 100px;
+  height: 70px;
   align-items: center;
 }
