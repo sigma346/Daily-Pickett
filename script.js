@@ -436,4 +436,21 @@ db.channel("chat")
   .subscribe();
 
 
+// ---------- Profile Image Upload ----------
+
+async function uploadProfileImage(file, userId) {
+  const fileExt = file.name.split('.').pop();
+  const filePath = `${userId}.${fileExt}`;
+
+  const { data, error } = await db.storage
+    .from('profile_pics')
+    .upload(filePath, file, { upsert: true });
+
+  if (error) {
+    console.error("Upload error:", error);
+    return null;
+  }
+
+  return filePath;
+}
 
