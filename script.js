@@ -137,7 +137,7 @@ async function applyProfileToUI() {
   if (profile) {
     qs("chat-username").value = profile.username;
     // store user color somewhere; we will use it when sending messages
-    window.currentUser = { id: profile.id, username: profile.username, color: profile.color };
+    window.currentUser = { id: profile.id, username: profile.username, color: profile.color, level: profile.level  };
   }
 }
 
@@ -238,7 +238,7 @@ async function sendEmote(emoteUrl) {
 
   const { error } = await db
     .from("chat_messages")
-    .insert([{ username: username, message: "", emote_url: emoteUrl }]);
+    .insert([{ username: username, message: "", emote_url: emoteUrl, color: window.currentUser?.color || "#000000ff", role: levelToRole(window.currentUser?.level) }]);
 
   if (error) console.error("Error sending emote:", error);
 
@@ -292,7 +292,7 @@ function formatTime(timestamp) {
   return `(${hours}:${minutes})`;
 }
 
-function addMessage(username, text, created_at, emote_url = null, color = "#000000ff") {
+function addMessage(username, text, created_at, emote_url = null, color = "#000000ff", role="") {
   // only logged in users can see messages
   //tell them they need to log in
   
@@ -308,6 +308,13 @@ function addMessage(username, text, created_at, emote_url = null, color = "#0000
   userSpan.classList.add("chat-username");
   userSpan.textContent = `[${username}]`;
   userSpan.style.color = color;
+
+  //role element
+  const roleSpan = document.createElement("span");
+  roleSpan.classList.add("chat-role");
+  roleSpan.textContent = `${role}`;
+  roleSpan.style.color = "#ff4500";
+  userSpan.appendChild(roleSpan);
 
   // message text
   const textSpan = document.createElement("span");
@@ -352,21 +359,16 @@ async function sendMessage() {
   const text = document.getElementById("chat-input").value.trim();
   if (!text) return;
 
+  const level = window.currentUser?.level || 1;
+
   // const color = document.getElementById('color').value;
   const color = window.currentUser?.color || "#000000ff";
-  const level = window.currentUser?.level || 1;
-  var role = "";
-  if (level == 2) {
-    role = "(Verified)";
-  } else if (level == 3) {
-    role = "(Moderator)";
-  } else if (level == 4) {
-    role = "(Admin)";
-  }
+
+  const role = levelToRole(level);
 
   const { error } = await db
     .from("chat_messages")
-    .insert([{ username: username, message: text, color, role }]);
+    .insert([{ username: username, message: text, color, role: role }]);
 
   if (error) console.error("Error sending message:", error);
 
@@ -386,6 +388,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// level to role
+function levelToRole(level) {
+  switch (level) {
+    case 1:
+      return "";
+    case 2:
+      return "(Verified)";
+    case 3:
+      return "(Moderator)";
+    case 4:
+      return "(Admin)";
+    default:
+      return "";
+  }
+}
 
 // 🔄 Load old messages
 // load existing messages (supports emotes)
@@ -400,7 +417,7 @@ async function loadMessages() {
     return;
   }
 
-  data.forEach((msg) => addMessage(msg.username, msg.message, msg.created_at, msg.emote_url, msg.color));
+  data.forEach((msg) => addMessage(msg.username, msg.message, msg.created_at, msg.emote_url, msg.color, msg.role));
 
 }
 
@@ -417,7 +434,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 db.channel("chat")
   .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages" }, (payload) => {
     const msg = payload.new;
-    addMessage(msg.username, msg.message, msg.created_at, msg.emote_url, msg.color);
+    addMessage(msg.username, msg.message, msg.created_at, msg.emote_url, msg.color, msg.role);
   })
   .subscribe();
 
