@@ -355,7 +355,7 @@ async function sendMessage() {
   // const color = document.getElementById('color').value;
   const color = window.currentUser?.color || "#000000ff";
   const level = window.currentUser?.level || 1;
-  const role = "";
+  var role = "";
   if (level == 2) {
     role = "(Verified)";
   } else if (level == 3) {
@@ -366,7 +366,7 @@ async function sendMessage() {
 
   const { error } = await db
     .from("chat_messages")
-    .insert([{ username: username, message: text, color }]);
+    .insert([{ username: username, message: text, color, role }]);
 
   if (error) console.error("Error sending message:", error);
 
@@ -421,5 +421,5 @@ db.channel("chat")
   })
   .subscribe();
 
-document.addEventListener("DOMContentLoaded", loadMessages);
+
 
