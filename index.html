@@ -6,18 +6,13 @@
     <link rel='stylesheet' href="stylesheet.css">
     <title>AI Pickett</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const db = supabase.createClient(
-            "https://zdtpcfxzncehhnvmglsj.supabase.co",
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdHBjZnh6bmNlaGhudm1nbHNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4MzcwMDYsImV4cCI6MjA3ODQxMzAwNn0.vlwKNgq0Gqyg7e747O7s3KCVw2J9bZQfS5zzW78X6RY"
-        );
-    </script>
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </head>
 
 <body>
     <div id="navbar"></div><br><br>
 
+    
     <div class="content-section">
     <h1>The Daily AI Pickett</h1>
     <p>Welcome to the official GitHub page for The Daily AI Pickett!</p>
@@ -42,17 +37,22 @@
     </div>
 
 
+
 <div class="chat-box">
+
+  <span class="chat-header">
+    <h2 style="text-align: center;">Chat Room</h2>
+    <p id="unlogged"><a href="login.html">Log in</a> to see and send messages</p>
+
   <div id="messages" class="messages"></div>
 
   <div class="chat-input-area">
     <input id="chat-username" placeholder="username">
     <input id="chat-input" placeholder="type message">
-    <button onclick="sendMessage()">Send</button>
-    <label for="color">Colour:</label>
-    <input type="color" id="color" value="#00ff88">
+    <input type="color" id="color" value="#000000">
+    <button onclick="sendMessage()" style="align-content: right;">Send</button>
   </div>
-
+  <hr>
   <!-- Emote selector -->
   <div id="emote-picker" class="emote-picker hidden">
     <img class="emote-img" src="media/hehehe.gif" alt="😂" onclick="sendEmote('media/hehehe.gif')">

@@ -6,13 +6,8 @@
     <link rel='stylesheet' href="stylesheet.css">
     <title>All Picketts</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const db = supabase.createClient(
-            "https://zdtpcfxzncehhnvmglsj.supabase.co",
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdHBjZnh6bmNlaGhudm1nbHNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4MzcwMDYsImV4cCI6MjA3ODQxMzAwNn0.vlwKNgq0Gqyg7e747O7s3KCVw2J9bZQfS5zzW78X6RY"
-        );
-    </script>
     <script src="script.js"></script>
+    
 </head>
 
 <body>
@@ -26,6 +21,11 @@
     </div>
     <script>
         async function loadAllImages() {
+            // only load images if logged in
+            if (!window.currentUser) {
+                document.getElementById('images-container').innerHTML = "<p>Please log in to view the images.</p>";
+                return;
+            }
             const today = new Date().toLocaleDateString("en-CA"); 
             const { data, error } = await db
                 .from('today_image')
