@@ -1,17 +1,8 @@
-# TODO: Make Chat Container Resizable
+# TODO: Add Delete Message Button for Moderators/Admins
 
-- [x] Add resize handle div to messages.html inside .chat-container
-- [x] Update stylesheet.css: Make .chat-container position: relative and add styles for .resize-handle
-- [x] Add JavaScript to script.js for drag resizing functionality
-
-# TODO: Implement Unread Message Tracking and Last Read Indicator
-
-- [x] Add variables in script.js for tracking last read message ID and unread count
-- [x] Modify loadMessages to set last read position to the most recent message
-- [x] Update addMessage to check if user is scrolled to bottom; if not, increment unread count and skip auto-scroll
-- [x] Add visual indicator (e.g., a horizontal line) above the last read message
-- [x] Update real-time listener to handle unread messages appropriately
-- [x] Add unread message counter in the chat header
-- [x] Persist last read position in localStorage for page reloads
-- [x] Auto-scroll to new messages when at bottom and window focused
-- [x] Update document title with unread count
+- [x] Add `deleteMessage(messageId)` function in `script.js` to delete message from database and remove from DOM
+- [x] Modify `addMessage` function in `script.js` to conditionally add delete button (❌ icon) to the right of timestamp if user level >= 3
+- [x] Add CSS styles for delete button in `stylesheet.css` (position far right, subtle gray, hover effects)
+- [ ] Test delete functionality on messages page
+- [ ] Verify only level 3+ users can see/use the button
+- [ ] Ensure real-time updates handle deleted messages (add DELETE listener if needed)

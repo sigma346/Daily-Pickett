@@ -248,10 +248,11 @@ button:active {
   margin-bottom: 10px;
   overflow-x: hidden;
   gap: 10px;
+  padding-right: 30px;
+  position: relative;
 }
 
 .chat-message.same-user {
-  margin-top: -2px; /* tighter stack */
   margin-bottom: 5px;
 }
 
@@ -275,6 +276,9 @@ button:active {
 .chat-right {
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
 }
 
 .message .content {
@@ -301,6 +305,8 @@ button:active {
   display: flex;
   gap: 8px;
   align-items: center;
+  position: relative;
+  padding-right: 20px;
 }
 
 .chat-username {
@@ -462,4 +468,25 @@ button:active {
   border: 1px solid #2bbd1a;
   border-radius: 50%;
   margin-right: 8px;
+}
+
+/* Delete message button for moderators/admins */
+.delete-message-btn {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.3;
+  line-height: 1;
+  margin-left: 5px;
+  box-shadow: none;
+}
+
+.delete-message-btn:hover {
+  opacity: 0.8;
+  transform: translateY(-50%);
 }

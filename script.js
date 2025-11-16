@@ -352,22 +352,37 @@ function addMessage(username, text, created_at, emote_url = null, color = "#0000
   const body = document.createElement("div");
   body.classList.add("chat-body");
 
+  // Content wrapper for message
+  const contentSpan = document.createElement("span");
+  contentSpan.classList.add("message-content");
+
   if (emote_url) {
     const emoteImg = document.createElement("img");
     emoteImg.src = emote_url;
     emoteImg.classList.add("chat-emote");
-    body.appendChild(emoteImg);
+    contentSpan.appendChild(emoteImg);
   } else {
     const textSpan = document.createElement("span");
     textSpan.classList.add("chat-text");
     textSpan.textContent = text;
-    body.appendChild(textSpan);
+    contentSpan.appendChild(textSpan);
   }
+
+  body.appendChild(contentSpan);
 
   const timeSpan = document.createElement("span");
   timeSpan.classList.add("chat-timestamp");
   timeSpan.textContent = formatTime(created_at);
   body.appendChild(timeSpan);
+
+  // Add delete button for moderators/admins (level 3+) to the right of timestamp
+  if (window.currentUser && window.currentUser.level >= 3 && messageId) {
+    const deleteBtn = document.createElement("button");
+    deleteBtn.classList.add("delete-message-btn");
+    deleteBtn.textContent = "❌";
+    deleteBtn.onclick = () => deleteMessage(messageId);
+    body.appendChild(deleteBtn);
+  }
 
   // Build final structure
   right.appendChild(body);
@@ -572,11 +587,18 @@ async function initPage() {
 
 
 // ⚡ Real-time message updates (no refresh)
-// update real-time listener to include emote_url
+// update real-time listener to include emote_url and handle deletes
 db.channel("chat")
   .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages" }, (payload) => {
     const msg = payload.new;
     addMessage(msg.username, msg.message, msg.created_at, msg.emote_url, msg.color, msg.role, window.currentUser?.profile_image, msg.id);
+  })
+  .on("postgres_changes", { event: "DELETE", schema: "public", table: "chat_messages" }, (payload) => {
+    const deletedId = payload.old.id;
+    const messageElement = document.querySelector(`[data-message-id="${deletedId}"]`);
+    if (messageElement) {
+      messageElement.remove();
+    }
   })
   .subscribe();
 
@@ -760,5 +782,34 @@ function updateLastReadIndicator() {
     span.textContent = "Last Read";
     indicator.appendChild(span);
     lastReadMessage.parentNode.insertBefore(indicator, lastReadMessage.nextSibling);
+  }
+}
+
+// Delete message function for moderators/admins
+async function deleteMessage(messageId) {
+  if (!window.currentUser || window.currentUser.level < 3) {
+    alert("You do not have permission to delete messages.");
+    return;
+  }
+
+  if (!confirm("Are you sure you want to delete this message?")) {
+    return;
+  }
+
+  const { error } = await db
+    .from("chat_messages")
+    .delete()
+    .eq("id", messageId);
+
+  if (error) {
+    console.error("Error deleting message:", error);
+    alert("Failed to delete message.");
+    return;
+  }
+
+  // Remove from DOM
+  const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+  if (messageElement) {
+    messageElement.remove();
   }
 }
